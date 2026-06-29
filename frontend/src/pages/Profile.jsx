@@ -4,6 +4,7 @@ import api from '../api';
 import Heatmap from '../components/Heatmap';
 import { useAuth } from '../context/AuthContext';
 import CompareModal from '../components/CompareModal';
+import MockInterviewsList from '../components/Profile/MockInterviewsList';
 
 const Profile = () => {
   const { username } = useParams();
@@ -138,6 +139,11 @@ const Profile = () => {
 
       {/* Dynamic Heatmap */}
       <Heatmap data={heatmapData} />
+
+      {/* Private Mock Interviews List */}
+      {user?.user_metadata?.username === profileData.username && (
+        <MockInterviewsList username={profileData.username} />
+      )}
 
       <CompareModal 
         isOpen={isCompareModalOpen} 

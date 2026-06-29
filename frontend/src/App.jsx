@@ -6,6 +6,7 @@ import Profile from './pages/Profile';
 import Problem from './pages/Problem';
 import Problems from './pages/Problems';
 import SparringArena from './pages/SparringArena';
+import InterviewArena from './pages/InterviewArena';
 import { useServerHeartbeat } from './hooks/useServerHeartbeat';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -50,6 +51,14 @@ function AppContent() {
             element={
               <ProtectedRoute>
                 <SparringArena />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/interview/:roomId" 
+            element={
+              <ProtectedRoute>
+                <InterviewArena />
               </ProtectedRoute>
             } 
           />

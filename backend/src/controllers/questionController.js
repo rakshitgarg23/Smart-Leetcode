@@ -2,9 +2,9 @@ const supabase = require('../config/supabaseClient');
 
 exports.getQuestions = async (req, res) => {
   try {
-    const { topic_id, difficulty } = req.query;
+    const { topic_id, difficulty, userId } = req.query;
     
-    let query = supabase.from('questions').select('id, title, topic_id, difficulty, description');
+    let query = supabase.from('questions').select('id, title, topic_id, difficulty, description, test_cases, starter_code, cheatsheet');
     
     if (topic_id) {
       query = query.eq('topic_id', topic_id);
@@ -18,7 +18,25 @@ exports.getQuestions = async (req, res) => {
 
     if (error) throw error;
 
-    res.status(200).json(data);
+    let solvedIds = new Set();
+    if (userId) {
+      const { data: solves } = await supabase
+        .from('submissions')
+        .select('question_id')
+        .eq('user_id', userId)
+        .eq('status', 'Accepted');
+        
+      if (solves) {
+        solves.forEach(s => solvedIds.add(s.question_id));
+      }
+    }
+
+    const enrichedData = data.map(q => ({
+      ...q,
+      is_solved: solvedIds.has(q.id)
+    }));
+
+    res.status(200).json(enrichedData);
   } catch (error) {
     console.error('Error fetching questions:', error);
     res.status(500).json({ error: 'Internal server error' });

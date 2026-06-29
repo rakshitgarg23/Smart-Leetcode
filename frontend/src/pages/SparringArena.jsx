@@ -225,6 +225,14 @@ const SparringArena = () => {
     return `${m}:${s}`;
   };
 
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   if (matchStatus === 'lobby') {
     return (
       <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center bg-gray-900 text-white p-4">
@@ -235,9 +243,19 @@ const SparringArena = () => {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto mb-6"></div>
           <h3 className="text-xl font-bold mb-4">Waiting for Challenger...</h3>
           <p className="text-gray-400 mb-6 text-sm">Share this link with your opponent to begin the match:</p>
-          <div className="p-3 bg-gray-900 rounded border border-gray-600 font-mono text-sm break-all text-blue-400">
-            {window.location.href}
+          
+          <div className="flex items-center space-x-2 mb-6">
+            <div className="flex-1 p-3 bg-gray-900 rounded border border-gray-600 font-mono text-sm break-all text-blue-400 text-left">
+              {window.location.href}
+            </div>
+            <button 
+              onClick={handleCopy}
+              className="px-4 py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded shadow-lg transition-colors whitespace-nowrap"
+            >
+              {copied ? 'Copied!' : 'Copy Link'}
+            </button>
           </div>
+
           <button 
             onClick={() => {
               // Dev shortcut to forcefully start match without a second player connecting

@@ -1,11 +1,26 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isInterview = location.pathname.includes('/interview/');
+
+  const handleNavClick = (e) => {
+    if (isInterview) {
+      if (!window.confirm("You are currently in an active interview session. Are you sure you want to leave?")) {
+        e.preventDefault();
+      }
+    }
+  };
 
   const handleLogout = async () => {
+    if (isInterview) {
+      if (!window.confirm("You are currently in an active interview session. Are you sure you want to logout?")) {
+        return;
+      }
+    }
     await signOut();
     navigate('/login');
   };
@@ -14,7 +29,7 @@ const Navbar = () => {
       <div className="w-full px-4 sm:px-8 lg:px-12">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-4">
-            <Link to="/" className="flex items-center space-x-2 text-xl font-bold hover:scale-105 transition-transform duration-200">
+            <Link to="/" onClick={handleNavClick} className="flex items-center space-x-2 text-xl font-bold hover:scale-105 transition-transform duration-200">
               <img src="/app icon.jpeg" alt="Smart Leetcode Logo" className="h-8 w-8 rounded-md object-cover" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
                 Smart Leetcode
@@ -24,10 +39,10 @@ const Navbar = () => {
           <div className="flex space-x-6 items-center">
             {user ? (
               <>
-                <Link to="/problems" className="text-gray-300 hover:text-white transition-colors">
+                <Link to="/problems" onClick={handleNavClick} className="text-gray-300 hover:text-white transition-colors">
                   Practice
                 </Link>
-                <Link to={`/profile/${user.user_metadata?.username || 'me'}`} className="text-gray-300 hover:text-white transition-colors">
+                <Link to={`/profile/${user.user_metadata?.username || 'me'}`} onClick={handleNavClick} className="text-gray-300 hover:text-white transition-colors">
                   Profile
                 </Link>
                 <button 
@@ -38,7 +53,7 @@ const Navbar = () => {
                 </button>
               </>
             ) : (
-              <Link to="/login" className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-500 text-white font-medium transition-colors shadow-md hover:shadow-blue-500/50">
+              <Link to="/login" onClick={handleNavClick} className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-500 text-white font-medium transition-colors shadow-md hover:shadow-blue-500/50">
                 Login
               </Link>
             )}

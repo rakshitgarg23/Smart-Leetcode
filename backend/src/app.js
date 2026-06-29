@@ -6,6 +6,7 @@ const questionRoutes = require('./routes/questionRoutes');
 const profileRoutes = require('./routes/profileRoutes');
 const codeRoutes = require('./routes/codeRoutes');
 const sparringRoutes = require('./routes/sparringRoutes');
+const interviewRoutes = require('./routes/interviewRoutes');
 const supabase = require('./config/supabaseClient');
 
 const app = express();
@@ -21,6 +22,7 @@ app.use('/api/questions', questionRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/code', codeRoutes);
 app.use('/api/sparring', sparringRoutes);
+app.use('/api/interviews', interviewRoutes);
 
 // Keep-Alive Route (Ping DB to prevent Supabase project pause)
 app.get('/api/keep-alive', async (req, res) => {

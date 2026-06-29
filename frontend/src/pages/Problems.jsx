@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
+import { useAuth } from '../context/AuthContext';
 
 const Problems = () => {
   const [questions, setQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const { user } = useAuth();
+
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await api.get('/api/questions');
+        const url = user?.id ? `/api/questions?userId=${user.id}` : '/api/questions';
+        const response = await api.get(url);
         setQuestions(response.data);
       } catch (error) {
         console.error('Failed to fetch questions:', error);
@@ -18,7 +22,7 @@ const Problems = () => {
       }
     };
     fetchQuestions();
-  }, []);
+  }, [user?.id]);
 
   if (isLoading) {
     return <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center text-white">Loading problems...</div>;
@@ -44,7 +48,10 @@ const Problems = () => {
               <tbody>
                 {questions.map((q, idx) => (
                   <tr key={q.id} className={`border-b border-gray-750 hover:bg-gray-750 transition-colors ${idx % 2 === 0 ? 'bg-gray-800/50' : 'bg-gray-800'}`}>
-                    <td className="px-6 py-4 text-white font-medium">{q.title}</td>
+                    <td className="px-6 py-4 text-white font-medium flex items-center space-x-2">
+                      {q.is_solved && <span className="text-green-500 font-bold" title="Solved">✓</span>}
+                      <span>{q.title}</span>
+                    </td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 rounded text-xs font-bold 
                         ${q.difficulty === 'Easy' ? 'bg-green-900/50 text-green-400 border border-green-800' : 
